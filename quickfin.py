@@ -9,7 +9,7 @@ catalog for referencing equities, stock symbols, sectors,
 and industry information.
 """
 
-__version__ = "1.10.0"
+__version__ = "1.11.0"
 __author__ = "Derek Evans <https://github.com/REPNOT>"
 __date__ = "28 March 2024"
 
