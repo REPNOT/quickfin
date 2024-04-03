@@ -11,7 +11,10 @@ Quickfin is a Python module providing instant access to live and historical stoc
 
 ## Dependencies
 
-### [Plotly](https://github.com/plotly/plotly.py)
+| Library   | Language | Link                                                               |
+| --------- | -------- | ------------------------------------------------------------------ |
+| Plotly    | Python   | https://github.com/plotly/plotly.py                                |
+
 
 
 ## Installation
