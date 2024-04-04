@@ -9,7 +9,7 @@ catalog for referencing equities, stock symbols, sectors,
 and industry information.
 """
 
-__version__ = "1.11.0"
+__version__ = "1.12.0"
 __author__ = "Derek Evans <https://github.com/REPNOT>"
 __date__ = "28 March 2024"
 
@@ -391,50 +391,32 @@ class PriceData():
         try:
             self.data["current"]['Open'] = round(float(self.current_price[1]), 2)
         except:
-            try:
-                self.data["current"]['Open'] = str(self.current_price[1])
-            except:
-                self.data["current"]['Open'] = ''
+            self.data["current"]['Open'] = ''
 
         try:
            self.data["current"]['High'] = round(float(self.current_price[2]), 2)
         except:
-            try:
-                self.data["current"]['High'] = str(self.current_price[2])
-            except:
-                self.data["current"]['High'] = ''
+            self.data["current"]['High'] = ''
 
         try:
             self.data["current"]['Low'] = round(float(self.current_price[3]), 2)
         except:
-            try:
-                self.data["current"]['Low'] = str(self.current_price[3])
-            except:
-                self.data["current"]['Low'] = ''
+            self.data["current"]['Low'] = ''
 
         try:
            self.data["current"]['Close'] = round(float(self.current_price[4]), 2)
         except:
-            try:
-               self.data["current"]['Close'] = str(self.current_price[4])
-            except:
-                self.data["current"]['Close'] = ''
+            self.data["current"]['Close'] = ''
 
         try:
             self.data["current"]['Adj Close'] = round(float(self.current_price[5]), 2)
         except:
-            try:
-                self.data["current"]['Adj Close'] = str(self.current_price[5])
-            except:
-                self.data["current"]['Adj Close'] = ''
+            self.data["current"]['Adj Close'] = ''
 
         try:
             self.data["current"]['Volume'] = int(self.current_price[6])
         except:
-            try:
-                self.data["current"]['Volume'] = str(self.current_price[6])
-            except:
-                self.data["current"]['Volume'] = ''
+            self.data["current"]['Volume'] = ''
 
         try:
             self.data["current"]['Change Amount'] = round((self.data["current"]['Open'] - self.data["current"]['Close']), 2)
@@ -517,7 +499,7 @@ class PriceData():
         self.data["history"] = []
 
         try:
-            self.raw_data = self.rawData[::-1]
+            self.raw_data = self.rawData[::-2]
         except:
             return '===  ERROR: DATA ERROR  ==='
 
@@ -538,50 +520,32 @@ class PriceData():
             try:
                 self.row_data['Open'] = round(float(self.price[1]), 2)
             except:
-                try:
-                    self.row_data['Open'] = str(self.price[1])
-                except:
-                    self.row_data['Open'] = ''
+                self.row_data['Open'] = ''
 
             try:
                 self.row_data['High'] = round(float(self.price[2]), 2)
             except:
-                try:
-                    self.row_data['High'] = str(self.price[2])
-                except:
-                    self.row_data['High'] = ''
+                self.row_data['High'] = ''
 
             try:
                 self.row_data['Low'] = round(float(self.price[3]), 2)
             except:
-                try:
-                    self.row_data['Low'] = str(self.price[3])
-                except:
-                    self.row_data['Low'] = ''
+                self.row_data['Low'] = ''
 
             try:
                 self.row_data['Close'] = round(float(self.price[4]), 2)
             except:
-                try:
-                    self.row_data['Close'] = str(self.price[4])
-                except:
-                    self.row_data['Close'] = ''
+                self.row_data['Close'] = ''
 
             try:
                 self.row_data['Adj Close'] = round(float(self.price[5]), 2)
             except:
-                try:
-                    self.row_data['Adj Close'] = str(self.price[5])
-                except:
-                    self.row_data['Adj Close'] = ''
+                self.row_data['Adj Close'] = ''
 
             try:
                 self.row_data['Volume'] = int(self.price[6])
             except:
-                try:
-                    self.row_data['Volume'] = str(self.price[6])
-                except:
-                    self.row_data['Volume'] = ''
+                self.row_data['Volume'] = ''
 
             try:
                 self.row_data['Change Amount'] = round((self.row_data['Open'] - self.row_data['Close']), 2)
