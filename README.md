@@ -1,4 +1,4 @@
-# Quick Fin &nbsp; [![PyPI version](https://badge.fury.io/py/quickfin.svg)](https://badge.fury.io/py/quickfin)
+# Quick Fin &nbsp; [![PyPI - Version](https://img.shields.io/pypi/v/quickfin)](https://pypi.org/project/quickfin/)
 
 
 ### [Docs](https://quickfin.techbyderek.com/) &nbsp; [Code Examples](https://quickfin.techbyderek.com/main/examples.html) &nbsp; [Data](https://gist.githubusercontent.com/REPNOT/6bffda0dd727d63a0bd727d4ff1c890a/raw/ec1ea323068b45739ddd595dfab897cc5f7c6487/fin_data.json) &nbsp; [Github Repo](https://github.com/REPNOT/quickfin) &nbsp; 
