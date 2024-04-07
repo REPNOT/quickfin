@@ -4,12 +4,13 @@ Quick Fin
 
 A Python module providing instant access to live
 and historical stock market price data, automated
-Plotly data visualization generators and a metadata
-catalog for referencing equities, stock symbols, sectors,
+Plotly data visualization generators, live stock ticker 
+visualization for Streamlit applications and a data 
+catalog for referencing equities, stock symbols, sectors, 
 and industry information.
 """
 
-__version__ = "1.14.0"
+__version__ = "1.15.0"
 __author__ = "Derek Evans <https://github.com/REPNOT>"
 __date__ = "28 March 2024"
 
@@ -902,7 +903,7 @@ class Ticker(PriceData):
 
         return
 
-    @st.experimental_fragment(run_every=540)
+    @st.experimental_fragment(run_every=600)
     def get_quotes(self, sym_lst):
 
         """
@@ -912,7 +913,7 @@ class Ticker(PriceData):
         If the ticker_data directory doesn't exist prior to the 
         method being ran, it will automatically create
         the directory.  The method will automatically rerun every
-        540 seconds to retrieve the latest price quotes available.
+        600 seconds to retrieve the latest price quotes available.
         """
 
         self.sym_lst = sym_lst
@@ -977,14 +978,14 @@ class Ticker(PriceData):
 
         return
 
-    @st.experimental_fragment(run_every=600)
+    @st.experimental_fragment(run_every=45)
     def ticker(self):
 
         """
         The `ticker` class generates a live stock
         ticker in Streamlit applications by reading
         the JSON file saved to the ticker_data directory.
-        The ticker will automatically rerun every 600 seconds
+        The ticker will automatically rerun every 45 seconds
         to get price updates from the quotes.json file.
         """
 
