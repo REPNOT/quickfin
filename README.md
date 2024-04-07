@@ -6,7 +6,7 @@
 
 ## Description
 
-Quickfin is a [Python](https://www.python.org/) module providing instant access to live and historical stock market price data, automated [Plotly](https://github.com/plotly/plotly.py) data visualization generators, live stock ticker visualization for Streamlit applications and a data catalog for referencing equities, stock symbols, sector, and industry information.
+Quickfin is a [Python](https://www.python.org/) module providing instant access to live and historical stock market price data, automated [Plotly](https://github.com/plotly/plotly.py) data visualization generators, live stock ticker visualization for [Streamlit](https://streamlit.io/) applications and a data catalog for referencing equities, stock symbols, sector, and industry information.
 
 
 ## Dependencies
