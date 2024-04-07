@@ -1,12 +1,12 @@
 # Quick Fin &nbsp;![PyPI - Version](https://img.shields.io/pypi/v/quickfin?logo=python&logoColor=white&labelColor=blue&color=green&link=https%3A%2F%2Fpypi.org%2Fproject%2Fquickfin%2F) ![GitHub Release](https://img.shields.io/github/v/release/repnot/quickfin?logo=github&logoColor=white&label=quickfin&labelColor=black&color=green&link=https%3A%2F%2Fgithub.com%2FREPNOT%2Fquickfin)
 
 
-### [Docs](https://quickfin.techbyderek.com/) &nbsp; [Code Examples](https://quickfin.techbyderek.com/main/examples.html) &nbsp; [Data](https://gist.githubusercontent.com/REPNOT/6bffda0dd727d63a0bd727d4ff1c890a/raw/ec1ea323068b45739ddd595dfab897cc5f7c6487/fin_data.json) &nbsp;
+### [Docs](https://quickfin.techbyderek.com/) &nbsp; [Code Examples](https://quickfin.techbyderek.com/main/examples.html) &nbsp; [Data](https://gist.githubusercontent.com/REPNOT/6bffda0dd727d63a0bd727d4ff1c890a/raw/ec1ea323068b45739ddd595dfab897cc5f7c6487/fin_data.json) &nbsp; [Github Repo](https://github.com/REPNOT/quickfin) &nbsp; 
 
 
 ## Description
 
-Quickfin is a [Python](https://www.python.org/) module providing instant access to live and historical stock market price data, automated [Plotly](https://github.com/plotly/plotly.py) data visualization generators, live stock ticker visualization for Streamlit applications and a data catalog for referencing equities, stock symbols, sector, and industry information.
+Quickfin is a [Python](https://www.python.org/) module providing instant access to live and historical stock market price data, automated [Plotly](https://github.com/plotly/plotly.py) data visualization generators, live stock ticker visualization for [Streamlit](https://streamlit.io/) applications and a data catalog for referencing equities, stock symbols, sector, and industry information.
 
 
 ## Dependencies
@@ -15,7 +15,6 @@ Quickfin is a [Python](https://www.python.org/) module providing instant access 
 | --------- | -------- | ------------------------------------------------------------------ |
 | Plotly    | Python   | https://github.com/plotly/plotly.py                                |
 | Streamlit | Python   | https://github.com/streamlit/streamlit                             |
-
 
 
 ## Installation
@@ -30,7 +29,7 @@ Quickfin is a [Python](https://www.python.org/) module providing instant access 
 
 ## Quickstart
 
-Retrieve a data payload containing the most recent stock price data available for the stock symbol passed to the `symbol` parameter. Method will return live market price quotes during trading hours. 
+Retrieve the most recent stock price data available for the stock symbol passed to the `symbol` parameter. Method will return live market price quotes during trading hours. 
 
 ### Input:
 
