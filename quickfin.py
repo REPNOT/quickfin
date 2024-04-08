@@ -10,7 +10,7 @@ catalog for referencing equities, stock symbols, sectors,
 and industry information.
 """
 
-__version__ = "1.13.0"
+__version__ = "1.14.1"
 __author__ = "Derek Evans <https://github.com/REPNOT>"
 __date__ = "28 March 2024"
 
@@ -21,6 +21,8 @@ import datetime
 from datetime import datetime
 from urllib.request import Request, urlopen
 import plotly.graph_objects as go
+from pathlib import Path
+import os
 
 
 class FinInfo():
@@ -67,6 +69,7 @@ class FinInfo():
         else:
 
             pprint(self.data["equities"][self.symbol])
+            return
 
 
     def equities(self, payload=True):
@@ -94,6 +97,7 @@ class FinInfo():
         else:
 
             pprint(self.payload)
+            return
 
 
     def industries(self, payload=True):
@@ -115,7 +119,7 @@ class FinInfo():
         else:
 
             pprint(self.data["meta_data"]["industries"])
-
+            return
 
     def sectors(self, payload=True):
 
@@ -136,7 +140,7 @@ class FinInfo():
         else:
 
             pprint(self.data["meta_data"]["sectors"])
-
+            return
 
     def sector_industries(self, sector=None, payload=True):
 
@@ -258,7 +262,7 @@ class FinInfo():
         else:
 
             pprint(list(self.data["equities"].keys()))
-
+            return
 
     def industry_symbols(self, industry=None, payload=True):
 
@@ -351,12 +355,10 @@ class PriceData():
         self.base_url = "https://query1.finance.yahoo.com/v7/finance/download/"
         self.tail_url = f"?period1={str(epoch_start)}&period2={str(epoch_target)}&interval=1d&events=history&includeAdjustedClose=true"
 
-
     def current(self, symbol):
 
         """
-        Return data payload containing the
-        most recent stock price data available
+        Return the most recent stock price data available
         for the stock symbol passed to the `symbol`
         parameter.  Method will return live market
         price quotes during trading hours.
@@ -420,13 +422,13 @@ class PriceData():
             self.data["current"]['Volume'] = ''
 
         try:
-            self.data["current"]['Change Amount'] = round((self.data["current"]['Open'] - self.data["current"]['Close']), 2)
+            self.data["current"]['Change Amount'] = round((self.data["current"]['Close'] - self.data["current"]['Open']), 2)
         except:
             self.data["current"]['Change Amount'] = ''
 
         try:
             if self.data["current"]['Change Amount'] != 0:
-                self.data["current"]['Change Rate'] = round((self.data["current"]['Change Amount'] / self.data["current"]['Open']), 2)
+                self.data["current"]['Change Rate'] = round((self.data["current"]['Change Amount'] / self.data["current"]['Open']), 4)
             else:
                 self.data["current"]['Change Rate'] = 0
         except:
@@ -434,29 +436,20 @@ class PriceData():
 
         try:
             self.data["current"]['Day Range'] = round((self.data["current"]['Low'] - self.data["current"]['High']), 2)
-
-            if self.data["current"]['Day Range'] < 0:
-                self.data["current"]['Day Range'] = self.data["current"]['Day Range'] * -1
-            else:
-                pass
-
         except:
 
             self.data["current"]['Day Range'] = ''
-
 
         try:
             return self.data
         except:
             return '===  SYMBOL DATA TYPE ERROR OR SYMBOL UNAVAILABLE  ==='
 
-
     def history(self, symbol, days=None, date=None, date_start=None, date_end=None):
 
         """
-        Return data payload containing all historical
-        stock price data available for the stock symbol 
-        passed to the `symbol` parameter.
+        Return all historical stock price data available 
+        for the stock symbol passed to the `symbol` parameter.
         
         Passing a positive integer value to the `days` 
         parameter will filter the historical data to include
@@ -488,7 +481,6 @@ class PriceData():
         """
 
         self.symbol = symbol
-
 
         try:
             url = self.base_url + self.symbol + self.tail_url
@@ -549,13 +541,13 @@ class PriceData():
                 self.row_data['Volume'] = ''
 
             try:
-                self.row_data['Change Amount'] = round((self.row_data['Open'] - self.row_data['Close']), 2)
+                self.row_data['Change Amount'] = round((self.row_data['Close'] - self.row_data['Open']), 2)
             except:
                 self.row_data['Change Amount'] = ''
 
             try:
                 if self.row_data['Change Amount'] != 0:
-                    self.row_data['Change Rate'] = round((self.row_data['Change Amount'] / self.row_data['Open']), 2)
+                    self.row_data['Change Rate'] = round((self.row_data['Change Amount'] / self.row_data['Open']), 4)
                 else:
                     self.row_data['Change Rate'] = 0
             except:
@@ -614,7 +606,6 @@ class PriceData():
 
             return self.data
 
-
     def candlestick(self, symbol, days):
 
         """
@@ -671,7 +662,6 @@ class PriceData():
             return self.history
         except:
             return f'===  SYMBOL DATA TYPE ERROR OR INVALID SYMBOL  ==='
-
 
     def line(self, symbol, days, param):
 
@@ -745,7 +735,6 @@ class PriceData():
             return self.history
         except:
             return f'===  SYMBOL DATA TYPE ERROR OR INVALID SYMBOL  ==='
-
 
     def table(self, symbol, days):
 
