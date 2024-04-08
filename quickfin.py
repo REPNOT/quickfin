@@ -10,7 +10,7 @@ catalog for referencing equities, stock symbols, sectors,
 and industry information.
 """
 
-__version__ = "1.15.0"
+__version__ = "1.13.0"
 __author__ = "Derek Evans <https://github.com/REPNOT>"
 __date__ = "28 March 2024"
 
@@ -21,9 +21,6 @@ import datetime
 from datetime import datetime
 from urllib.request import Request, urlopen
 import plotly.graph_objects as go
-import streamlit as st
-from pathlib import Path
-import os
 
 
 class FinInfo():
@@ -70,7 +67,6 @@ class FinInfo():
         else:
 
             pprint(self.data["equities"][self.symbol])
-            return
 
 
     def equities(self, payload=True):
@@ -98,7 +94,6 @@ class FinInfo():
         else:
 
             pprint(self.payload)
-            return
 
 
     def industries(self, payload=True):
@@ -120,7 +115,7 @@ class FinInfo():
         else:
 
             pprint(self.data["meta_data"]["industries"])
-            return
+
 
     def sectors(self, payload=True):
 
@@ -141,7 +136,7 @@ class FinInfo():
         else:
 
             pprint(self.data["meta_data"]["sectors"])
-            return
+
 
     def sector_industries(self, sector=None, payload=True):
 
@@ -263,7 +258,7 @@ class FinInfo():
         else:
 
             pprint(list(self.data["equities"].keys()))
-            return
+
 
     def industry_symbols(self, industry=None, payload=True):
 
@@ -356,10 +351,12 @@ class PriceData():
         self.base_url = "https://query1.finance.yahoo.com/v7/finance/download/"
         self.tail_url = f"?period1={str(epoch_start)}&period2={str(epoch_target)}&interval=1d&events=history&includeAdjustedClose=true"
 
+
     def current(self, symbol):
 
         """
-        Return the most recent stock price data available
+        Return data payload containing the
+        most recent stock price data available
         for the stock symbol passed to the `symbol`
         parameter.  Method will return live market
         price quotes during trading hours.
@@ -423,13 +420,13 @@ class PriceData():
             self.data["current"]['Volume'] = ''
 
         try:
-            self.data["current"]['Change Amount'] = round((self.data["current"]['Close'] - self.data["current"]['Open']), 2)
+            self.data["current"]['Change Amount'] = round((self.data["current"]['Open'] - self.data["current"]['Close']), 2)
         except:
             self.data["current"]['Change Amount'] = ''
 
         try:
             if self.data["current"]['Change Amount'] != 0:
-                self.data["current"]['Change Rate'] = round((self.data["current"]['Change Amount'] / self.data["current"]['Open']), 4)
+                self.data["current"]['Change Rate'] = round((self.data["current"]['Change Amount'] / self.data["current"]['Open']), 2)
             else:
                 self.data["current"]['Change Rate'] = 0
         except:
@@ -437,20 +434,29 @@ class PriceData():
 
         try:
             self.data["current"]['Day Range'] = round((self.data["current"]['Low'] - self.data["current"]['High']), 2)
+
+            if self.data["current"]['Day Range'] < 0:
+                self.data["current"]['Day Range'] = self.data["current"]['Day Range'] * -1
+            else:
+                pass
+
         except:
 
             self.data["current"]['Day Range'] = ''
+
 
         try:
             return self.data
         except:
             return '===  SYMBOL DATA TYPE ERROR OR SYMBOL UNAVAILABLE  ==='
 
+
     def history(self, symbol, days=None, date=None, date_start=None, date_end=None):
 
         """
-        Return all historical stock price data available 
-        for the stock symbol passed to the `symbol` parameter.
+        Return data payload containing all historical
+        stock price data available for the stock symbol 
+        passed to the `symbol` parameter.
         
         Passing a positive integer value to the `days` 
         parameter will filter the historical data to include
@@ -482,6 +488,7 @@ class PriceData():
         """
 
         self.symbol = symbol
+
 
         try:
             url = self.base_url + self.symbol + self.tail_url
@@ -542,13 +549,13 @@ class PriceData():
                 self.row_data['Volume'] = ''
 
             try:
-                self.row_data['Change Amount'] = round((self.row_data['Close'] - self.row_data['Open']), 2)
+                self.row_data['Change Amount'] = round((self.row_data['Open'] - self.row_data['Close']), 2)
             except:
                 self.row_data['Change Amount'] = ''
 
             try:
                 if self.row_data['Change Amount'] != 0:
-                    self.row_data['Change Rate'] = round((self.row_data['Change Amount'] / self.row_data['Open']), 4)
+                    self.row_data['Change Rate'] = round((self.row_data['Change Amount'] / self.row_data['Open']), 2)
                 else:
                     self.row_data['Change Rate'] = 0
             except:
@@ -607,6 +614,7 @@ class PriceData():
 
             return self.data
 
+
     def candlestick(self, symbol, days):
 
         """
@@ -663,6 +671,7 @@ class PriceData():
             return self.history
         except:
             return f'===  SYMBOL DATA TYPE ERROR OR INVALID SYMBOL  ==='
+
 
     def line(self, symbol, days, param):
 
@@ -736,6 +745,7 @@ class PriceData():
             return self.history
         except:
             return f'===  SYMBOL DATA TYPE ERROR OR INVALID SYMBOL  ==='
+
 
     def table(self, symbol, days):
 
@@ -813,256 +823,3 @@ class PriceData():
             return self.history
         except:
             return f'===  SYMBOL DATA TYPE ERROR OR INVALID SYMBOL  ==='
-
-
-class Ticker(PriceData):
-
-    """
-    The Ticker class is to generate live stock ticker
-    visualizations for Streamlit applications.
-
-    Please note that this class will only work in
-    Streamlit applications.
-    """
-
-    def __init__(self):
-
-        self.price_data = PriceData()
-
-    @st.experimental_fragment()
-    def get_quotes_temp(self, sym_lst):
-
-        """
-        The `get_quotes_temp` method is used to initiate
-        the stock ticker by collecting a partial
-        list of price quotes and writing the data to a JSON
-        file named quotes.json saved to the ticker_data directory.
-        If the ticker_data directory doesn't exist prior to the 
-        method being ran, it will automatically create the directory.
-        """
-
-        self.sym_lst = sym_lst[0:3]
-
-        self.priceData = [self.price_data.current(symbol) for symbol in self.sym_lst]
-
-        self.priceData = (
-            {
-                "name":equity["info"]["name"], 
-                "symbol":equity["info"]["symbol"],
-                "close":equity["current"]["Close"],
-                "change_amount":equity["current"]["Change Amount"],
-                "change_rate":equity["current"]["Change Rate"]   
-            } 
-            for equity in self.priceData
-        )
-
-        self.symbol_color = "#1D99EB"
-        self.name_color = "#ffffff"
-        self.close_color = "#ffffff"
-        self.lag_color = "#F20505"
-        self.gain_color = "#84BF04"
-        self.even_color = "#ffffff"
-
-        self.quote_data = []
-
-        for quote in list(self.priceData):
-
-            payload = {}
-
-            payload["symbol"] = f'<span id="symbol" style="color:{self.symbol_color};">&nbsp;&nbsp;&nbsp;&nbsp;{quote["symbol"]}</span>'
-            payload["name"] = f'<span id="name" style="color:{self.name_color};">{quote["name"]}</span>'
-            payload["close"] = f'<span id="close" style="color:{self.close_color};">$ {str(quote["close"])}</span>'
-            payload["change_amount"] = quote["change_amount"]
-
-            try:
-                payload["change_rate"] = str(round((quote["change_rate"] * 100), 3))
-            except:
-                payload["change_rate"] = '- null -'
-
-            if float(payload["change_amount"]) < 0:
-                payload["change_amount"] = f'<span class="lag" style="color:{self.lag_color};">$ {str(payload["change_amount"])}</span>'
-                payload["change_rate"] = f'<span class="lag" style="color:{self.lag_color};">{str(payload["change_rate"])}%</span>'
-            elif float(payload["change_amount"]) > 0:
-                payload["change_amount"] = f'<span class="gain" style="color:{self.gain_color};">$ {str(payload["change_amount"])}</span>'
-                payload["change_rate"] = f'<span class="gain" style="color:{self.gain_color};">{str(payload["change_rate"])}%</span>'
-            else:
-                payload["change_amount"] = f'<span class="even" style="color:{self.even_color};">$ {str(payload["change_amount"])}</span>'
-                payload["change_rate"] = f'<span class="even" style="color:{self.even_color};">{str(payload["change_rate"])}%</span>'
-
-            self.quote_data.append(payload)
-
-        try:
-            os.makedirs(f"{str(Path.cwd())}/ticker_data")
-        except:
-            pass
-
-        file_str = f"{str(Path.cwd())}/ticker_data/quotes.json"
-
-        with open(file_str, "w") as fileObj:
-            json.dump(self.quote_data, fileObj, indent=4)
-
-        return
-
-    @st.experimental_fragment(run_every=600)
-    def get_quotes(self, sym_lst):
-
-        """
-        The `get_quotes` is used to collect a full list
-        of price quotes and writing the data to a JSON
-        file named quotes.json saved to the ticker_data directory.  
-        If the ticker_data directory doesn't exist prior to the 
-        method being ran, it will automatically create
-        the directory.  The method will automatically rerun every
-        600 seconds to retrieve the latest price quotes available.
-        """
-
-        self.sym_lst = sym_lst
-
-        self.priceData = [self.price_data.current(symbol) for symbol in self.sym_lst]
-
-        self.priceData = (
-            {
-                "name":equity["info"]["name"], 
-                "symbol":equity["info"]["symbol"],
-                "close":equity["current"]["Close"],
-                "change_amount":equity["current"]["Change Amount"],
-                "change_rate":equity["current"]["Change Rate"]   
-            } 
-            for equity in self.priceData
-        )
-
-        self.symbol_color = "#1D99EB"
-        self.name_color = "#ffffff"
-        self.close_color = "#ffffff"
-        self.lag_color = "#F20505"
-        self.gain_color = "#84BF04"
-        self.even_color = "#ffffff"
-
-        self.quote_data = []
-
-        for quote in list(self.priceData):
-
-            payload = {}
-
-            payload["symbol"] = f'<span id="symbol" style="color:{self.symbol_color};">&nbsp;&nbsp;&nbsp;&nbsp;{quote["symbol"]}</span>'
-            payload["name"] = f'<span id="name" style="color:{self.name_color};">{quote["name"]}</span>'
-            payload["close"] = f'<span id="close" style="color:{self.close_color};">$ {str(quote["close"])}</span>'
-            payload["change_amount"] = quote["change_amount"]
-
-            try:
-                payload["change_rate"] = str(round((quote["change_rate"] * 100), 3))
-            except:
-                payload["change_rate"] = '- null -'
-
-            if float(payload["change_amount"]) < 0:
-                payload["change_amount"] = f'<span class="lag" style="color:{self.lag_color};">$ {str(payload["change_amount"])}</span>'
-                payload["change_rate"] = f'<span class="lag" style="color:{self.lag_color};">{str(payload["change_rate"])}%</span>'
-            elif float(payload["change_amount"]) > 0:
-                payload["change_amount"] = f'<span class="gain" style="color:{self.gain_color};">$ {str(payload["change_amount"])}</span>'
-                payload["change_rate"] = f'<span class="gain" style="color:{self.gain_color};">{str(payload["change_rate"])}%</span>'
-            else:
-                payload["change_amount"] = f'<span class="even" style="color:{self.even_color};">$ {str(payload["change_amount"])}</span>'
-                payload["change_rate"] = f'<span class="even" style="color:{self.even_color};">{str(payload["change_rate"])}%</span>'
-
-            self.quote_data.append(payload)
-
-        try:
-            os.makedirs(f"{str(Path.cwd())}/ticker_data")
-        except:
-            pass
-
-        file_str = f"{str(Path.cwd())}/ticker_data/quotes.json"
-
-        with open(file_str, "w") as fileObj:
-            json.dump(self.quote_data, fileObj, indent=4)
-
-        return
-
-    @st.experimental_fragment(run_every=45)
-    def ticker(self):
-
-        """
-        The `ticker` class generates a live stock
-        ticker in Streamlit applications by reading
-        the JSON file saved to the ticker_data directory.
-        The ticker will automatically rerun every 45 seconds
-        to get price updates from the quotes.json file.
-        """
-
-        try:
-            file_str = f"{str(Path.cwd())}/ticker_data/quotes.json"
-
-            with open(file_str, "r") as fileObj:
-                self.ticker_data = json.load(fileObj)
-        except:
-            print("=====   TICKER DATA UNAVAILABLE   =====")
-            return
-
-        self.ticker_height = str(round((2.5 * .85), 2))
-        self.top_padding = str(round((.5 * .6), 2))
-        self.font_size = str(round((2.75 * .6), 2))
-
-        self.brkt_open = "{"
-        self.brkt_close = "}"
-
-        self.style = f"""
-            <style>
-                marquee {self.brkt_open}
-                    background-color:#000000;
-                    color:#000000;
-                    height:{self.ticker_height}em;
-                    padding-top:{self.top_padding}em;
-                    font-size:{self.font_size}em;
-                    font-weight:800;
-                    font-family:Helvetica;
-                    box-shadow:rgba(0, 0, 0, .35) 0px 6px 6px 0px;
-                    border-radius:5px;
-                {self.brkt_close}
-            </style>
-        """
-
-        st.html(f"""
-            <div>
-                {self.style}
-                <div>
-                    <marquee direction="left" scrollamount="2">
-                        {["&nbsp;&nbsp;&nbsp;".join([payload[quote] for quote in payload.keys()]) for payload in self.ticker_data]}
-                    </marquee>
-                </div>
-            </div>
-        """)
-
-        return
-
-    @st.experimental_fragment()
-    def start(self, syms):
-
-        """
-        The `start` class is used to initiate all processes
-        required to the generate a live stock ticker in a Streamlit
-        application.  Its primary purpose is to ensure processes
-        are executed in the correct order for the purpose of generating 
-        the visualization in a Streamlit application with acceptable
-        amount of delay.
-        """
-
-        self.syms = syms
-
-        if self.syms == None and type(self.syms) is not list:
-            print("=====   ERROR: UNKNOWN ERROR   ===")
-            return
-        else:
-            pass
-
-        if len(self.syms) >= 5:
-            self.get_quotes_temp(self.syms)
-            self.ticker()
-            self.get_quotes(self.syms)
-            return
-        elif len(self.syms) > 100:
-            print("=====   ERROR: STOCK SYMBOLS EXCEEDS LIMIT OF 100 SYMBOLS - REDUCE LIST SIZE AND TRY AGAIN   =====")
-            return
-        else:
-            self.get_quotes(self.syms)
-            self.ticker()
-            return
